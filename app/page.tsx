@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ArrowUp, Sparkles, User, Bot, Loader2 } from "lucide-react";
+import { ArrowUp, Sparkles, User, Bot, Loader2, Sun, Moon } from "lucide-react";
 
 type Message = {
   role: "assistant" | "user";
@@ -42,6 +42,7 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>(seedMessages);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -51,6 +52,10 @@ export default function Home() {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isTyping]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
 
   const handleSend = () => {
     if (!inputValue.trim()) return;
@@ -115,9 +120,40 @@ export default function Home() {
           <motion.a whileHover={{ y: -2 }} href="#contact">Contact</motion.a>
         </nav>
 
-        <motion.a whileHover={{ scale: 1.05 }} href="#chatbox" className="login-pill">
-          Open chat
-        </motion.a>
+        <motion.button 
+          whileHover={{ scale: 1.05, rotate: 15 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')}
+          className="login-pill"
+          aria-label="Toggle theme"
+          style={{ width: "42px", height: "42px", padding: 0, display: "grid", placeItems: "center" }}
+        >
+          <AnimatePresence mode="wait">
+            {theme === "light" ? (
+              <motion.div
+                key="sun"
+                initial={{ opacity: 0, rotate: -90 }}
+                animate={{ opacity: 1, rotate: 0 }}
+                exit={{ opacity: 0, rotate: 90 }}
+                transition={{ duration: 0.2 }}
+                style={{ display: "flex" }}
+              >
+                <Sun size={20} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="moon"
+                initial={{ opacity: 0, rotate: 90 }}
+                animate={{ opacity: 1, rotate: 0 }}
+                exit={{ opacity: 0, rotate: -90 }}
+                transition={{ duration: 0.2 }}
+                style={{ display: "flex" }}
+              >
+                <Moon size={20} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.button>
       </header>
 
       <section className="hero-card" id="overview">
@@ -311,27 +347,16 @@ export default function Home() {
         <aside className="symbols-column" aria-label="Visual motifs">
           {featuredMarks.map((mark, index) => (
             <motion.div
-              initial="idle"
-              whileHover="hover"
-              variants={{
-                idle: { scale: 1, rotate: 0, backgroundColor: "rgba(255, 255, 255, 0.3)", color: "#0d0d0d" },
-                hover: { scale: 1.05, rotate: 5, backgroundColor: "#0d0d0d", color: "#ffffff" }
-              }}
+              whileHover={{ scale: 1.05, rotate: 5 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
               key={`${mark.label}-${index}`}
-              className="symbol-tile"
+              className="symbol-tile hover-invert"
               style={{ animationDelay: `${index * 140}ms` }}
             >
               <span className="symbol-mark">{mark.symbol}</span>
-              <motion.span 
-                variants={{
-                  idle: { color: "var(--muted)" },
-                  hover: { color: "#cccccc" }
-                }}
-                className="symbol-label"
-              >
+              <span className="symbol-label">
                 {mark.label}
-              </motion.span>
+              </span>
             </motion.div>
           ))}
         </aside>
