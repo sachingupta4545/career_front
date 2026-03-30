@@ -10,32 +10,30 @@ type Message = {
 };
 
 const featuredMarks = [
-  { symbol: "[]", label: "Identity systems" },
-  { symbol: "<>", label: "Web experiences" },
-  { symbol: "++", label: "AI copilots" },
-  { symbol: "//", label: "Motion direction" },
-  { symbol: "**", label: "Launch strategy" },
-  { symbol: "01", label: "Editorial systems" },
+  { symbol: "Re", label: "React & Next.js" },
+  { symbol: "Ts", label: "TypeScript" },
+  { symbol: "Nd", label: "Node.js & APIs" },
+  { symbol: "Db", label: "Databases & CI/CD" },
 ];
 
 const seedMessages: Message[] = [
   {
     role: "assistant",
-    body: "Hello! I am SChat, your AI assistant. Tell me what you are launching and I will shape the homepage, chat journey, and conversion flow.",
+    body: "Hello! I'm Sachin's AI assistant. Ask me about his tech stack, recent projects, or how to get in touch.",
   }
 ];
 
 const quickActions = [
-  "Launch website",
-  "Chat assistant",
-  "SEO system",
-  "Design audit",
+  "Tech stack",
+  "Recent projects",
+  "Contact info",
+  "Experience",
 ];
 
 const statCards = [
-  { value: "04", label: "signature experiences" },
-  { value: "24h", label: "prototype turnaround" },
-  { value: "SEO", label: "metadata structured" },
+  { value: "05+", label: "years experience" },
+  { value: "20+", label: "projects shipped" },
+  { value: "Full", label: "stack mastery" },
 ];
 
 export default function Home() {
@@ -65,15 +63,27 @@ export default function Home() {
     setInputValue("");
     setIsTyping(true);
 
-    // Simulate AI response
+    // Simulate AI response based on queries
+    const lowerInput = userMessage.body.toLowerCase();
+
     setTimeout(() => {
+      let responseBody = "I'm here to help. If you're looking to hire or collaborate, feel free to reach out directly via contact details.";
+
+      if (lowerInput.includes("stack") || lowerInput.includes("tech")) {
+        responseBody = "Sachin specializes in React, Next.js, TypeScript on the frontend, and Node.js with various databases on the back end.";
+      } else if (lowerInput.includes("project")) {
+        responseBody = "He has built numerous full-stack applications, from complex dashboards to high-performance AI copilots.";
+      } else if (lowerInput.includes("contact")) {
+        responseBody = "You can reach Sachin at hi@example.com or find him on LinkedIn and GitHub.";
+      }
+
       const aiMessage: Message = {
         role: "assistant",
-        body: "I am ready to help you shape this surface. We can proceed with a modular visual setup for that concept."
+        body: responseBody
       };
       setMessages((prev) => [...prev, aiMessage]);
       setIsTyping(false);
-    }, 1800);
+    }, 1200);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -93,15 +103,10 @@ export default function Home() {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "WebSite",
-            name: "Sand Chat UI",
-            description:
-              "A Sand Studio-inspired animated AI landing page built with Next.js.",
-            potentialAction: {
-              "@type": "SearchAction",
-              target: "https://example.com/?q={search_term_string}",
-              "query-input": "required name=search_term_string",
-            },
+            "@type": "Person",
+            name: "Sachin Gupta",
+            jobTitle: "Software Engineer",
+            url: "https://yourportfolio.com",
           }),
         }}
       />
@@ -111,16 +116,16 @@ export default function Home() {
           <span className="brand-burst" aria-hidden="true">
             S
           </span>
-          <span className="brand-name">SAND DESKTOP</span>
+          <span className="brand-name">SACHIN GUPTA</span>
         </motion.div>
 
         <nav className="topnav" aria-label="Primary">
-          <motion.a whileHover={{ y: -2 }} href="#overview">Overview</motion.a>
-          <motion.a whileHover={{ y: -2 }} href="#chatbox">SChat</motion.a>
+          <motion.a whileHover={{ y: -2 }} href="#overview">Profile</motion.a>
+          <motion.a whileHover={{ y: -2 }} href="#chatbox">AI Assistant</motion.a>
           <motion.a whileHover={{ y: -2 }} href="#contact">Contact</motion.a>
         </nav>
 
-        <motion.button 
+        <motion.button
           whileHover={{ scale: 1.05, rotate: 15 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')}
@@ -160,14 +165,13 @@ export default function Home() {
         <aside className="story-column">
           <div className="story-intro">
             <p className="eyebrow-copy">
-              Editorial web design and AI-native chat interfaces shaped into one
-              premium landing page.
+              Full-Stack Engineer crafting premium web experiences, blending modern UI design with robust backend architecture.
             </p>
 
-            <div className="service-pills" aria-label="Capabilities">
-              <span>Brand systems</span>
-              <span>OpenAI chat UI</span>
-              <span>Motion direction</span>
+            <div className="service-pills" aria-label="Skills">
+              <span>Frontend Dev</span>
+              <span>Backend Architecture</span>
+              <span>UI / UX Polish</span>
             </div>
           </div>
 
@@ -175,52 +179,44 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="wordmark-block"
+            style={{ marginBottom: 'auto' }}
           >
-            <h1 className="hero-wordmark">SAND</h1>
-            <p className="wordmark-support">
-              Built to feel sharp on desktop and composed on mobile.
-            </p>
+            <motion.h1
+              className="hero-wordmark"
+              initial={{ scale: 0.85, opacity: 0, filter: 'blur(10px)' }}
+              animate={{ scale: 1, opacity: 1, filter: 'blur(0px)' }}
+              transition={{ type: "spring", stiffness: 100, damping: 15, delay: 0.2 }}
+              style={{ paddingBottom: '10px' }}
+            >
+              SACHIN
+            </motion.h1>
+            <motion.p
+              className="wordmark-support"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+            >
+              Software Engineer building products that feel smooth and perform fast.
+            </motion.p>
           </motion.div>
-
-          <div className="info-grid">
-            <motion.div whileHover={{ scale: 1.02 }} className="weather-chip">
-              <span className="weather-icon" aria-hidden="true">
-                31
-              </span>
-              <div>
-                <p className="temperature">31.2 C</p>
-                <p className="muted-copy">Clear sky, Kolkata studio</p>
-              </div>
-            </motion.div>
-
-            <div className="city-list">
-              <p>Monday 19:32</p>
-              <p>Bangkok</p>
-              <p>London</p>
-              <p>New York</p>
-              <p>Singapore</p>
-              <p className="accent-copy">LOCAL</p>
-            </div>
-          </div>
 
           <div className="story-actions">
             <motion.a whileHover={{ scale: 1.05 }} href="#chatbox" className="primary-link">
-              Start SChat
+              Talk to my AI
             </motion.a>
             <motion.a whileHover={{ scale: 1.05 }} href="#contact" className="secondary-link">
-              Request build
+              View Resume
             </motion.a>
           </div>
 
           <nav className="legal-links" aria-label="Secondary">
-            <a href="#privacy">Privacy Policy</a>
-            <a href="#terms">Terms and Conditions</a>
-            <a href="#cookies">Cookies Policy</a>
+            <a href="#github">GitHub Profile</a>
+            <a href="#linkedin">LinkedIn Network</a>
+            <a href="#email">Email Me</a>
           </nav>
 
           <p className="made-by" id="contact">
-            Made for a Sand-inspired Next.js experience with production-ready
-            structure.
+            Built with Next.js, Framer Motion, and custom AI tooling.
           </p>
         </aside>
 
@@ -240,9 +236,9 @@ export default function Home() {
                   <Sparkles size={18} strokeWidth={2.5} />
                 </span>
                 <div>
-                  <p className="chat-name">SChat Assistant</p>
+                  <p className="chat-name">Sachin's Copilot</p>
                   <p className="chat-subtitle">
-                    OpenAI-ready assistant for your brand
+                    AI agent trained on my resume & projects
                   </p>
                 </div>
               </div>
@@ -252,7 +248,7 @@ export default function Home() {
             <div className="chat-toolbar" aria-label="Quick actions">
               {quickActions.map((action) => (
                 <motion.button
-                  whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.7)" }}
+                  whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.7)", color: "#111" }}
                   whileTap={{ scale: 0.95 }}
                   key={action}
                   className="toolbar-pill"
@@ -277,7 +273,7 @@ export default function Home() {
                     <div className="message-topline" style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px', opacity: 0.7, justifyContent: 'flex-start' }}>
                       {message.role === "assistant" ? <Bot size={18} /> : <User size={18} />}
                       <span className="message-title" style={{ fontWeight: 'bold', fontSize: '0.85rem' }}>
-                        {message.role === "assistant" ? "SChat" : "You"}
+                        {message.role === "assistant" ? "Copilot" : "You"}
                       </span>
                     </div>
                     <p style={{ margin: 0 }}>{message.body}</p>
@@ -293,7 +289,7 @@ export default function Home() {
                     style={{ alignSelf: 'flex-start', padding: '12px 18px', display: 'flex', alignItems: 'center', gap: '8px' }}
                   >
                     <Loader2 size={16} className="lucide-icon-spin" />
-                    <span style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>SChat is responding...</span>
+                    <span style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>Copilot is responding...</span>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -304,7 +300,7 @@ export default function Home() {
               <div className="composer-box">
                 <input
                   type="text"
-                  placeholder="Message SChat..."
+                  placeholder="Ask a question..."
                   className="composer-input"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
@@ -324,13 +320,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* <div className="chat-footer">
-              <div style={{ display: 'flex', gap: '16px' }}>
-                <p>hi@sandchatui.com</p>
-                <p>Privacy and AI disclosure</p>
-              </div>
-              <div className="powered-by">Powered by OpenAI-compatible UX</div>
-            </div> */}
           </motion.div>
 
           <div className="dock-row" aria-hidden="true" style={{ marginTop: '14px' }}>
@@ -340,11 +329,11 @@ export default function Home() {
                 <span>{card.label}</span>
               </motion.div>
             ))}
-            <motion.div whileHover={{ y: -8 }} className="dock-card text-card">email and message concierge</motion.div>
+            <motion.div whileHover={{ y: -8 }} className="dock-card text-card">Available for new opportunities</motion.div>
           </div>
         </section>
 
-        <aside className="symbols-column" aria-label="Visual motifs">
+        <aside className="symbols-column" aria-label="Tech Stack">
           {featuredMarks.map((mark, index) => (
             <motion.div
               whileHover={{ scale: 1.05, rotate: 5 }}
@@ -353,7 +342,7 @@ export default function Home() {
               className="symbol-tile hover-invert"
               style={{ animationDelay: `${index * 140}ms` }}
             >
-              <span className="symbol-mark">{mark.symbol}</span>
+              <span className="symbol-mark" style={{ fontSize: '1.5rem' }}>{mark.symbol}</span>
               <span className="symbol-label">
                 {mark.label}
               </span>
