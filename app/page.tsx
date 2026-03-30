@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { ArrowUp, Sparkles, User, Bot, Loader2 } from "lucide-react";
 
 type Message = {
   role: "assistant" | "user";
-  title: string;
   body: string;
-  meta: string;
 };
 
 const featuredMarks = [
@@ -21,35 +21,8 @@ const featuredMarks = [
 const seedMessages: Message[] = [
   {
     role: "assistant",
-    title: "SChat",
-    body: "Welcome in. Tell me what you are launching and I will shape the homepage, chat journey, and conversion flow.",
-    meta: "online now",
-  },
-  {
-    role: "user",
-    title: "You",
-    body: "We need a premium AI-first homepage with a better chatbot, stronger art direction, and mobile responsiveness.",
-    meta: "brief received",
-  },
-  {
-    role: "assistant",
-    title: "SChat",
-    body: "I am setting up a sharper layout: editorial storytelling on the left, guided prompts in the center, and a modular visual rail on the right.",
-    meta: "drafting concept",
-  },
-  {
-    role: "assistant",
-    title: "SChat",
-    body: "Next I would wire this surface to an OpenAI endpoint so the same UI becomes a live assistant instead of a static showcase.",
-    meta: "ready for integration",
-  },
-];
-
-const promptSamples = [
-  "Design an AI-first brand story",
-  "Build a premium support chatbot",
-  "Create a motion-led launch page",
-  "Map an SEO landing page system",
+    body: "Hello! I am SChat, your AI assistant. Tell me what you are launching and I will shape the homepage, chat journey, and conversion flow.",
+  }
 ];
 
 const quickActions = [
@@ -66,33 +39,47 @@ const statCards = [
 ];
 
 export default function Home() {
-  const [activePrompt, setActivePrompt] = useState(promptSamples[0]);
-  const [visibleMessages, setVisibleMessages] = useState(seedMessages.slice(0, 2));
+  const [messages, setMessages] = useState<Message[]>(seedMessages);
+  const [inputValue, setInputValue] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
-    const messageTimer = window.setInterval(() => {
-      setVisibleMessages((current) => {
-        if (current.length === seedMessages.length) {
-          return seedMessages.slice(0, 2);
-        }
+    scrollToBottom();
+  }, [messages, isTyping]);
 
-        return seedMessages.slice(0, current.length + 1);
-      });
-    }, 2400);
+  const handleSend = () => {
+    if (!inputValue.trim()) return;
 
-    const promptTimer = window.setInterval(() => {
-      setActivePrompt((current) => {
-        const currentIndex = promptSamples.indexOf(current);
-        const nextIndex = (currentIndex + 1) % promptSamples.length;
-        return promptSamples[nextIndex];
-      });
-    }, 2200);
+    const userMessage: Message = { role: "user", body: inputValue };
+    setMessages((prev) => [...prev, userMessage]);
+    setInputValue("");
+    setIsTyping(true);
 
-    return () => {
-      window.clearInterval(messageTimer);
-      window.clearInterval(promptTimer);
-    };
-  }, []);
+    // Simulate AI response
+    setTimeout(() => {
+      const aiMessage: Message = {
+        role: "assistant",
+        body: "I am ready to help you shape this surface. We can proceed with a modular visual setup for that concept."
+      };
+      setMessages((prev) => [...prev, aiMessage]);
+      setIsTyping(false);
+    }, 1800);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSend();
+    }
+  };
+
+  const handleQuickAction = (action: string) => {
+    setInputValue(action);
+  };
 
   return (
     <main className="page-shell">
@@ -115,22 +102,22 @@ export default function Home() {
       />
 
       <header className="topbar">
-        <div className="brand-lockup">
+        <motion.div whileHover={{ scale: 1.05 }} className="brand-lockup">
           <span className="brand-burst" aria-hidden="true">
             S
           </span>
           <span className="brand-name">SAND DESKTOP</span>
-        </div>
+        </motion.div>
 
         <nav className="topnav" aria-label="Primary">
-          <a href="#overview">Overview</a>
-          <a href="#chatbox">SChat</a>
-          <a href="#contact">Contact</a>
+          <motion.a whileHover={{ y: -2 }} href="#overview">Overview</motion.a>
+          <motion.a whileHover={{ y: -2 }} href="#chatbox">SChat</motion.a>
+          <motion.a whileHover={{ y: -2 }} href="#contact">Contact</motion.a>
         </nav>
 
-        <a href="#chatbox" className="login-pill">
+        <motion.a whileHover={{ scale: 1.05 }} href="#chatbox" className="login-pill">
           Open chat
-        </a>
+        </motion.a>
       </header>
 
       <section className="hero-card" id="overview">
@@ -148,15 +135,19 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="wordmark-block">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="wordmark-block"
+          >
             <h1 className="hero-wordmark">SAND</h1>
             <p className="wordmark-support">
               Built to feel sharp on desktop and composed on mobile.
             </p>
-          </div>
+          </motion.div>
 
           <div className="info-grid">
-            <div className="weather-chip">
+            <motion.div whileHover={{ scale: 1.02 }} className="weather-chip">
               <span className="weather-icon" aria-hidden="true">
                 31
               </span>
@@ -164,7 +155,7 @@ export default function Home() {
                 <p className="temperature">31.2 C</p>
                 <p className="muted-copy">Clear sky, Kolkata studio</p>
               </div>
-            </div>
+            </motion.div>
 
             <div className="city-list">
               <p>Monday 19:32</p>
@@ -177,12 +168,12 @@ export default function Home() {
           </div>
 
           <div className="story-actions">
-            <a href="#chatbox" className="primary-link">
+            <motion.a whileHover={{ scale: 1.05 }} href="#chatbox" className="primary-link">
               Start SChat
-            </a>
-            <a href="#contact" className="secondary-link">
+            </motion.a>
+            <motion.a whileHover={{ scale: 1.05 }} href="#contact" className="secondary-link">
               Request build
-            </a>
+            </motion.a>
           </div>
 
           <nav className="legal-links" aria-label="Secondary">
@@ -201,114 +192,162 @@ export default function Home() {
           <div className="halo-mark">S</div>
           <div className="status-dot" />
 
-          <div className="chat-frame" id="chatbox">
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="chat-frame"
+            id="chatbox"
+          >
             <div className="chat-header">
-              <div className="chat-title">
+              <div className="chat-title" style={{ gap: '14px', alignItems: 'center' }}>
                 <span className="tiny-mark" aria-hidden="true">
-                  SC
+                  <Sparkles size={18} strokeWidth={2.5} />
                 </span>
                 <div>
-                  <p className="chat-name">SChat Concierge</p>
+                  <p className="chat-name">SChat Assistant</p>
                   <p className="chat-subtitle">
-                    OpenAI-ready assistant for websites, launches, and support
+                    OpenAI-ready assistant for your brand
                   </p>
                 </div>
               </div>
-              <span className="chat-badge">Live assistant</span>
+              <span className="chat-badge">Live</span>
             </div>
 
             <div className="chat-toolbar" aria-label="Quick actions">
               {quickActions.map((action) => (
-                <button key={action} className="toolbar-pill" type="button">
+                <motion.button
+                  whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.7)" }}
+                  whileTap={{ scale: 0.95 }}
+                  key={action}
+                  className="toolbar-pill"
+                  type="button"
+                  onClick={() => handleQuickAction(action)}
+                >
                   {action}
-                </button>
+                </motion.button>
               ))}
             </div>
 
             <div className="message-stack">
-              {visibleMessages.map((message, index) => (
-                <article
-                  key={`${message.role}-${index}`}
-                  className={`message-bubble ${message.role}`}
-                >
-                  <div className="message-topline">
-                    <p className="message-title">{message.title}</p>
-                    <span className="message-meta">{message.meta}</span>
-                  </div>
-                  <p>{message.body}</p>
-                </article>
-              ))}
+              <AnimatePresence initial={false}>
+                {messages.map((message, index) => (
+                  <motion.article
+                    key={index}
+                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                    className={`message-bubble ${message.role}`}
+                  >
+                    <div className="message-topline" style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px', opacity: 0.7, justifyContent: 'flex-start' }}>
+                      {message.role === "assistant" ? <Bot size={18} /> : <User size={18} />}
+                      <span className="message-title" style={{ fontWeight: 'bold', fontSize: '0.85rem' }}>
+                        {message.role === "assistant" ? "SChat" : "You"}
+                      </span>
+                    </div>
+                    <p style={{ margin: 0 }}>{message.body}</p>
+                  </motion.article>
+                ))}
 
-              <div className="typing-row" aria-label="Assistant typing">
-                <span>SChat is shaping the next response</span>
-                <div className="typing-dots" aria-hidden="true">
-                  <span />
-                  <span />
-                  <span />
-                </div>
-              </div>
-            </div>
-
-            <div className="suggestion-row" aria-label="Suggested prompts">
-              {promptSamples.map((prompt) => (
-                <button
-                  key={prompt}
-                  type="button"
-                  className={`suggestion-chip${
-                    activePrompt === prompt ? " active" : ""
-                  }`}
-                >
-                  {prompt}
-                </button>
-              ))}
+                {isTyping && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className="message-bubble assistant"
+                    style={{ alignSelf: 'flex-start', padding: '12px 18px', display: 'flex', alignItems: 'center', gap: '8px' }}
+                  >
+                    <Loader2 size={16} className="lucide-icon-spin" />
+                    <span style={{ fontSize: '0.9rem', color: 'var(--muted)' }}>SChat is responding...</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <div ref={messagesEndRef} />
             </div>
 
             <div className="composer">
-              <div className="composer-label">Prompt in rotation</div>
               <div className="composer-box">
-                <div className="composer-copy">
-                  <span className="composer-kicker">Ask SChat</span>
-                  <span className="composer-text">{activePrompt}</span>
-                </div>
-                <button className="send-button" aria-label="Send prompt" type="button">
-                  Send
-                </button>
+                <input
+                  type="text"
+                  placeholder="Message SChat..."
+                  className="composer-input"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="send-button"
+                  aria-label="Send prompt"
+                  type="button"
+                  onClick={handleSend}
+                  disabled={!inputValue.trim()}
+                >
+                  <ArrowUp size={20} strokeWidth={2.5} />
+                </motion.button>
               </div>
             </div>
 
-            <div className="chat-footer">
-              <div>
+            {/* <div className="chat-footer">
+              <div style={{ display: 'flex', gap: '16px' }}>
                 <p>hi@sandchatui.com</p>
                 <p>Privacy and AI disclosure</p>
               </div>
               <div className="powered-by">Powered by OpenAI-compatible UX</div>
-            </div>
-          </div>
+            </div> */}
+          </motion.div>
 
-          <div className="dock-row" aria-hidden="true">
+          <div className="dock-row" aria-hidden="true" style={{ marginTop: '14px' }}>
             {statCards.map((card) => (
-              <div key={card.label} className="dock-card stat-card">
+              <motion.div whileHover={{ y: -8 }} key={card.label} className="dock-card stat-card">
                 <strong>{card.value}</strong>
                 <span>{card.label}</span>
-              </div>
+              </motion.div>
             ))}
-            <div className="dock-card text-card">email and message concierge</div>
+            <motion.div whileHover={{ y: -8 }} className="dock-card text-card">email and message concierge</motion.div>
           </div>
         </section>
 
         <aside className="symbols-column" aria-label="Visual motifs">
           {featuredMarks.map((mark, index) => (
-            <div
+            <motion.div
+              initial="idle"
+              whileHover="hover"
+              variants={{
+                idle: { scale: 1, rotate: 0, backgroundColor: "rgba(255, 255, 255, 0.3)", color: "#0d0d0d" },
+                hover: { scale: 1.05, rotate: 5, backgroundColor: "#0d0d0d", color: "#ffffff" }
+              }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
               key={`${mark.label}-${index}`}
               className="symbol-tile"
               style={{ animationDelay: `${index * 140}ms` }}
             >
               <span className="symbol-mark">{mark.symbol}</span>
-              <span className="symbol-label">{mark.label}</span>
-            </div>
+              <motion.span 
+                variants={{
+                  idle: { color: "var(--muted)" },
+                  hover: { color: "#cccccc" }
+                }}
+                className="symbol-label"
+              >
+                {mark.label}
+              </motion.span>
+            </motion.div>
           ))}
         </aside>
       </section>
+
+      {/* Dynamic inline styles to support spin animation for Loader2 */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .lucide-icon-spin {
+          animation: spin 1s linear infinite;
+        }
+      `}} />
     </main>
   );
 }
